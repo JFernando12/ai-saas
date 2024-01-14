@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { MessageSquare } from 'lucide-react';
+import { ImageIcon, MessageSquare } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +12,6 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { ChatCompletionMessageParam } from 'openai/resources';
 import { useRouter } from 'next/navigation';
 import { Empty } from '@/components/empty';
 import { Loader } from '@/components/loader';
@@ -20,9 +19,9 @@ import { UserAvatar } from '@/components/user-avatar';
 import { BotAvatar } from '@/components/bot-avatar';
 import { cn } from '@/lib/utils';
 
-const ConversationPage = () => {
+const ImagePage = () => {
   const route = useRouter();
-  const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
+  const [images, setImages] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,19 +34,9 @@ const ConversationPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const userMessage: ChatCompletionMessageParam = {
-        role: 'user',
-        content: values.prompt,
-      };
+      const response = await axios.post('/api/conversation');
 
-      const newMessages = [...messages, userMessage];
-
-      const response = await axios.post('/api/conversation', {
-        messages: newMessages,
-      });
-
-      setMessages((current) => [...current, userMessage, response.data]);
-      form.reset();
+      form.reset()
     } catch (error) {
       console.log(error);
     } finally {
@@ -58,11 +47,11 @@ const ConversationPage = () => {
   return (
     <div>
       <Heading
-        title="Conversation"
-        description="Chat with the smartest AI - Experience the power of AI"
-        icon={MessageSquare}
-        iconColor="text-violet-500"
-        bgColor="bg-violet-500/10"
+        title="Image Generation"
+        description="Turn your prompt into an image"
+        icon={ImageIcon}
+        iconColor="text-pink-700"
+        bgColor="bg-pink-700/10"
       />
       <div className="px-4 lg:px8">
         <div>
@@ -103,29 +92,16 @@ const ConversationPage = () => {
               <Loader />
             </div>
           )}
-          {messages.length === 0 && !isLoading && (
-            <Empty label="There is no conversation started." />
+          {images.length === 0 && !isLoading && (
+            <Empty label="No images generated." />
           )}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.content?.toString()}
-                className={cn(
-                  'p-8 w-full flex items-start gap-x-8 rounded-lg',
-                  message.role === 'user' ? 'bg-white border border-black/10' : 'bg-muted'
-                )}
-              >
-                {message.role === 'user' ? <UserAvatar /> : <BotAvatar />}
-                <p className='text-sm'>
-                  {message.content?.toString()}
-                </p>
-              </div>
-            ))}
-          </div>
+        <div>
+          Image will be here
+        </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ConversationPage;
+export default ImagePage;

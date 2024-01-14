@@ -27,7 +27,6 @@ export async function POST(
       return new NextResponse("Messages are required", { status: 400 });
     }
 
-    console.log('messages: ', messages)
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages
