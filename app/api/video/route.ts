@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import Replicate from "replicate";
 
 const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKE!
+  auth: process.env.REPLICATE_API_TOKEN!
 })
 
 export async function POST(
