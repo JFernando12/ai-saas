@@ -1,6 +1,6 @@
 'use client';
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { MessageSquare, Music } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -19,8 +19,10 @@ import { Loader } from '@/components/loader';
 import { UserAvatar } from '@/components/user-avatar';
 import { BotAvatar } from '@/components/bot-avatar';
 import { cn } from '@/lib/utils';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 const MusicPage = () => {
+  const proModal = useProModal();
   const route = useRouter();
   const [music, setMusic] = useState<string>();
 
@@ -41,7 +43,9 @@ const MusicPage = () => {
       setMusic(response.data.audio)
       form.reset();
     } catch (error) {
-      console.log(error);
+      if ((error as AxiosError).response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       route.refresh();
     }

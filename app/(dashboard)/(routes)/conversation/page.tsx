@@ -1,6 +1,6 @@
 'use client';
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { MessageSquare } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -19,8 +19,10 @@ import { Loader } from '@/components/loader';
 import { UserAvatar } from '@/components/user-avatar';
 import { BotAvatar } from '@/components/bot-avatar';
 import { cn } from '@/lib/utils';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 const ConversationPage = () => {
+  const proModal = useProModal();
   const route = useRouter();
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
 
@@ -49,7 +51,9 @@ const ConversationPage = () => {
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset();
     } catch (error) {
-      console.log(error);
+      if ((error as AxiosError)?.response?.status === 403) {
+        proModal.onOpen();
+      };
     } finally {
       route.refresh();
     }
@@ -112,13 +116,13 @@ const ConversationPage = () => {
                 key={message.content?.toString()}
                 className={cn(
                   'p-8 w-full flex items-start gap-x-8 rounded-lg',
-                  message.role === 'user' ? 'bg-white border border-black/10' : 'bg-muted'
+                  message.role === 'user'
+                    ? 'bg-white border border-black/10'
+                    : 'bg-muted'
                 )}
               >
                 {message.role === 'user' ? <UserAvatar /> : <BotAvatar />}
-                <p className='text-sm'>
-                  {message.content?.toString()}
-                </p>
+                <p className="text-sm">{message.content?.toString()}</p>
               </div>
             ))}
           </div>

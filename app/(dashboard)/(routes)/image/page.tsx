@@ -1,6 +1,6 @@
 'use client';
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Download, ImageIcon, MessageSquare } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -21,8 +21,10 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardFooter } from '@/components/ui/card';
 import Image from 'next/image';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 const ImagePage = () => {
+  const proModal = useProModal();
   const route = useRouter();
   const [images, setImages] = useState<string[]>([]);
 
@@ -47,7 +49,9 @@ const ImagePage = () => {
       setImages(urls);
       form.reset()
     } catch (error) {
-      console.log(error);
+      if ((error as AxiosError).response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       route.refresh();
     }

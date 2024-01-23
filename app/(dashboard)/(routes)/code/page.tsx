@@ -1,6 +1,6 @@
 'use client';
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Code } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -20,8 +20,10 @@ import { Loader } from '@/components/loader';
 import { UserAvatar } from '@/components/user-avatar';
 import { BotAvatar } from '@/components/bot-avatar';
 import { cn } from '@/lib/utils';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 const CodePage = () => {
+  const proModal = useProModal();
   const route = useRouter();
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
 
@@ -50,7 +52,9 @@ const CodePage = () => {
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset();
     } catch (error) {
-      console.log(error);
+      if ((error as AxiosError).response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       route.refresh();
     }

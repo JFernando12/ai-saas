@@ -6,13 +6,15 @@ import {
   MessageSquare,
   Music,
   VideoIcon,
+  Zap,
 } from 'lucide-react';
 
 import { useProModal } from "@/hooks/use-pro-modal"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog"
 import { Badge } from "./ui/badge";
 import { Card } from "./ui/card";
 import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
 
 const tools = [
   {
@@ -77,11 +79,21 @@ export const ProModal = () => {
                       {tool.label}
                     </div>
                   </div>
-                  <Check />
+                  <Check className='text-primary w-5 h-5' />
                 </Card>
               ))}
             </DialogDescription>
           </DialogHeader>
+          <DialogFooter>
+            <Button
+              size='lg'
+              variant='premium'
+              className='w-full'
+            >
+              Upgrade
+              <Zap className='w-4 h-4 ml-2 fill-white' />
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

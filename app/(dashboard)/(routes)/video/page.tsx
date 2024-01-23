@@ -1,6 +1,6 @@
 'use client';
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { VideoIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -15,8 +15,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Empty } from '@/components/empty';
 import { Loader } from '@/components/loader';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 const VideoPage = () => {
+  const proModal = useProModal();
   const route = useRouter();
   const [video, setVideo] = useState<string>();
 
@@ -37,7 +39,9 @@ const VideoPage = () => {
       setVideo(response.data[0])
       form.reset();
     } catch (error) {
-      console.log(error);
+      if ((error as AxiosError).response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       route.refresh();
     }
