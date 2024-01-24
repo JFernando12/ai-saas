@@ -21,6 +21,7 @@ import { UserAvatar } from '@/components/user-avatar';
 import { BotAvatar } from '@/components/bot-avatar';
 import { cn } from '@/lib/utils';
 import { useProModal } from '@/hooks/use-pro-modal';
+import { toast } from 'react-hot-toast';
 
 const CodePage = () => {
   const proModal = useProModal();
@@ -54,7 +55,9 @@ const CodePage = () => {
     } catch (error) {
       if ((error as AxiosError).response?.status === 403) {
         proModal.onOpen();
-      }
+      } else {
+        toast.error('Something went wrong');
+      };
     } finally {
       route.refresh();
     }

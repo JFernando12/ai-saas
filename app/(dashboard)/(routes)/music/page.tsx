@@ -12,14 +12,12 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { ChatCompletionMessageParam } from 'openai/resources';
 import { useRouter } from 'next/navigation';
 import { Empty } from '@/components/empty';
 import { Loader } from '@/components/loader';
-import { UserAvatar } from '@/components/user-avatar';
-import { BotAvatar } from '@/components/bot-avatar';
-import { cn } from '@/lib/utils';
+
 import { useProModal } from '@/hooks/use-pro-modal';
+import { toast } from 'react-hot-toast';
 
 const MusicPage = () => {
   const proModal = useProModal();
@@ -45,7 +43,9 @@ const MusicPage = () => {
     } catch (error) {
       if ((error as AxiosError).response?.status === 403) {
         proModal.onOpen();
-      }
+      } else {
+        toast.error('Something went wrong');
+      };
     } finally {
       route.refresh();
     }

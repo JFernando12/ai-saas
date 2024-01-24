@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { Empty } from '@/components/empty';
 import { Loader } from '@/components/loader';
 import { useProModal } from '@/hooks/use-pro-modal';
+import { toast } from 'react-hot-toast';
 
 const VideoPage = () => {
   const proModal = useProModal();
@@ -41,7 +42,9 @@ const VideoPage = () => {
     } catch (error) {
       if ((error as AxiosError).response?.status === 403) {
         proModal.onOpen();
-      }
+      } else {
+        toast.error('Something went wrong');
+      };
     } finally {
       route.refresh();
     }
